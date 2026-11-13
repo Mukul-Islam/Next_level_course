@@ -3,7 +3,7 @@ import { json } from "stream/consumers";
 import routeHandler from "./routes/route";
 
 const server = createServer((req:IncomingMessage , res:ServerResponse) =>{
-    console.log(req)
+    // console.log(req)
    routeHandler(req,res);
    
 })

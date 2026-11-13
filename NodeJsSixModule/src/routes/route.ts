@@ -4,6 +4,9 @@ import productController from "../controller/product.controller";
 const routeHandler = (req:IncomingMessage , res:ServerResponse)=>{
      const url = req.url;
     const method = req.method;
+
+    // console.log(url)
+
      if(url === "/" && method === "GET"){
         // console.log("this is route ")
         res.writeHead(200,{
