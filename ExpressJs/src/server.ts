@@ -20,10 +20,34 @@ app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
 
 const pool = new Pool({
-    connectionString:"postgresql://neondb_owner:npg_5IRC3XnGVvsj@ep-lingering-field-aofnicp7.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    connectionString:"postgresql://neondb_owner:npg_5IRC3XnGVvsj@ep-lingering-field-aofnicp7.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=false&channel_binding=require"
 })
 
-console.log(pool)
+// console.log(pool)
+
+//? async / await keno use korci
+const initDB = async()=>{
+    try {
+        await pool.query(`
+        create table if not exists users(
+        id serial primary key,
+        name varchar(255),
+        email varchar(255) unique not null,
+        password varchar(255) not null,
+        age int,
+        is_Active boolean default true,
+        
+        created_at timestamp default now(),
+        updated_at timestamp default now()
+
+        );  
+        `);
+        console.log("Database conneted")
+    } catch (error) {
+        console.log(error)
+    }
+}
+initDB()
 
 
 app.get("/", (req: Request, res: Response) => {
@@ -38,17 +62,33 @@ app.get("/", (req: Request, res: Response) => {
 
 
 //! ar ekhane async ken korlam
-app.post("/", async (req: Request, res: Response) => {
-  // console.log(req.body);
+app.post("/api/v1/users", async (req: Request, res: Response) => {
+    try {
+          // console.log(req.body);
   // const body = req.body;
-  const { name, age, password } = req.body;
+  const { name, age,email, password } = req.body;
+
+    const result = await pool.query(`
+        insert into users (name,email,password,age) values ($1,$2,$3,$4) returning *`,[name,email,password,age])
+    console.log(result)
+
 //   console.log(password);
-  res.status(200).json({
+  res.status(201).json({
     success: "true",
-    message: "This is a test Api",
+    message: "User created",
     // data:body,
-    data: { name, age },
+    // data: { name, age },
+    data:result.rows[0]
   });
+    } catch (error:any) {
+        res.status(500).json({
+    success: false,
+    message: error?.message,
+    // data:body,
+    // data: { name, age },
+    data:error
+  });
+    }
 });
 
 app.listen(port, () => {
