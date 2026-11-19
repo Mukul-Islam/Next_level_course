@@ -6,6 +6,7 @@ import express, {
 import { Pool } from "pg";
 
 
+
 const app: Application = express();
 const port = 3000;
 
@@ -90,6 +91,119 @@ app.post("/api/v1/users", async (req: Request, res: Response) => {
   });
     }
 });
+
+app.get("/api/v1/users",async(req:Request,res:Response)=>{
+   try {
+    const result = await pool.query(`
+        select * from users
+        `);
+        // console.log(result)
+    res.status(200).json({
+    success: true,
+    message: "Users fetching successfully",
+    data:result.rows,
+   });
+   } catch (error:any) {
+     res.status(500).json({
+    success: false,
+    message: error?.message,
+    // data:body,
+    // data: { name, age },
+    error:error,
+   });
+}
+});
+
+app.get("/api/v1/users/:id",async(req:Request,res:Response)=>{
+    try {
+        //? nicher vabeo likha jai
+        // const id = req.params.id;
+
+        const {id} =req.params;
+        const result = await pool.query(`
+            select * from users where id = $1
+            `,[id])
+            // console.log(result)
+    res.status(201).json({
+    success: "true",
+    message: "User created",
+    // data:body,
+    // data: { name, age },
+    data:result.rows[0]
+  });
+    } catch (error:any) {
+         res.status(500).json({
+    success: false,
+    message: error?.message,
+    // data:body,
+    // data: { name, age },
+    error:error,
+   });
+    }
+});
+
+app.put('/api/v1/users/:id',async(req:Request,res:Response)=>{
+    try {
+        const {id} = req.params;
+        const {name,password,age,is_Active} = req.body;
+
+        const result = await pool.query(`
+        
+            update users 
+            set
+            name = coalesce($1, name),
+            password = coalesce($2, password),
+            age = coalesce($3, age),
+            is_Active = coalesce($4, is_Active),
+            updated_at = now()
+            where id = $5 returning *
+        `,[name?? null,password??null,age??null,is_Active??null,id]
+    );
+    // console.log(result);
+
+    res.status(200).json({
+    success: "true",
+    message: "User Updated Successfully",
+    // data:body,
+    // data: { name, age },
+    data:result.rows[0]
+  });
+
+    } catch (error:any) {
+        res.status(500).json({
+    success: false,
+    message: error?.message,
+    // data:body,
+    // data: { name, age },
+    error:error,
+   });
+    }
+}); 
+
+app.delete("/api/v1/users/:id", async(req:Request,res:Response)=>{
+    try {
+        const {id} = req.params;
+        const result = await pool.query(`
+            delete from users where id = $1
+            `,[id]);
+    res.status(200).json({
+    success: true,
+    message: "User Deleted Successfully",
+    // data:body,
+    // data: { name, age },
+    // data:result.rows[0]
+  });
+        
+    } catch (error:any) {
+    res.status(500).json({
+    success: false,
+    message: error?.message,
+    // data:body,
+    // data: { name, age },
+    error:error,
+   });
+    }
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
