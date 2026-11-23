@@ -4,15 +4,15 @@ import type { IUser, UUser } from "./user.interface";
 
 const crateUserIntoDB = async (payLoad:IUser)=>{
 
-     const { name, age, email, password } = payLoad;
+     const { name, age, email, password,role } = payLoad;
 
      const hashPassword = await bcrypt.hash(password,10);
     //  console.log("hasH",hashPassword)
 
     const result = await pool.query(
       `
-        insert into users (name,email,password,age) values ($1,$2,$3,$4) returning *`,
-      [name, email, hashPassword, age],
+        insert into users (name,email,password,age,role) values ($1,$2,$3,$4,COALESCE($5, 'user')) returning *`,
+      [name, email, hashPassword, age,role],
     );
 
     delete result.rows[0].password;

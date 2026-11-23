@@ -20,7 +20,8 @@ export const initDB = async () => {
         password varchar(255) not null,
         age int,
         is_Active boolean default true,
-        
+        role varchar(20) default 'user',
+
         created_at timestamp default now(),
         updated_at timestamp default now()
 

@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { userController } from "./user.controller";
+import auth from "../../middleware/auth";
+import { User_Role } from "../../types";
 
 const router = Router()
+
+
 
 // /api/v1/users
 router.post("/", userController.createUser);
 
-router.get("/", userController.getAllUsers);
+router.get("/",auth(User_Role.admin,User_Role.agent,User_Role.user), userController.getAllUsers);
 
 router.get("/:id",userController.getSingleUser );
 
