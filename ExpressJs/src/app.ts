@@ -10,6 +10,7 @@ import { authRoute } from "./modules/auth/auth.routes.";
 import logger from "./middleware/logger";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import cors from "cors"
+import cookieParser from "cookie-parser"
 
 
 
@@ -21,6 +22,7 @@ const corsOptions = {
     optionsSuccessStatus:200,
 };
 
+app.use(cookieParser())
 app.use(cors(corsOptions))
 app.use(express.json());
 app.use(express.text());
