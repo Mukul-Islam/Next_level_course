@@ -20,7 +20,7 @@ const allUsers = async(req:Request,res:Response)=>{
         res.status(200).json({
             success:true,
             message:"all users are getting successfully",
-            data:result.rows[0]
+            data:result.rows
         })
     } catch (error:any) {
         res.status(500).json({

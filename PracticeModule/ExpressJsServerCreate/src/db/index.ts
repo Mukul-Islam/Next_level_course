@@ -14,6 +14,7 @@ export const initDB = async ()=>{
             email varchar (255) unique not null,
             password varchar(255) not null,
             age int,
+            role varchar(20) default 'user',
             is_active boolean default true,
             created_at timestamp default now(),
             updated_at timestamp default now()

@@ -5,15 +5,15 @@ import bcrypt from "bcryptjs";
 
 const createUserIntoDB = async(payLoad:IUser)=>{
       // console.log(req.body)
-    const {name,email,password,age} = payLoad;
+    const {name,email,password,age,role} = payLoad;
     const hashPassword = await bcrypt.hash(password,10);
     // console.log(hashPassword)
 
     const result = await pool.query(`
         
-        insert into users2 (name,email,password,age) values 
-        ($1,$2,$3,$4) returning *
-        `,[name,email,hashPassword,age]);
+        insert into users2 (name,email,password,age,role) values 
+        ($1,$2,$3,$4,coalesce($5, 'user')) returning *
+        `,[name,email,hashPassword,age,role]);
 
       delete result.rows[0].password
         return result;
