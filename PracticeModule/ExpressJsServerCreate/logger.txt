@@ -146,3 +146,6 @@
  method-> POST 
  url-> /api/v1/users 
  Date-> 1795798758318
+ method-> GET 
+ url-> / 
+ Date-> 1795801465542

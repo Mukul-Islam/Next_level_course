@@ -2,8 +2,11 @@ import type { NextFunction, Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken"
 import config from "../config";
 import { pool } from "../db";
+import type { Role } from "../types";
 
-const auth =()=>{
+
+
+const auth =(...role:Role[])=>{
     // amra abar notun kore ken banailam karon ekhane role nirdharon korte
     return async(req:Request,res:Response,next:NextFunction)=>{
     // console.log("This is protected route!");
